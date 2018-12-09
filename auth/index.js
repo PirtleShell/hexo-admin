@@ -21,12 +21,15 @@ module.exports = function (app, hexo) {
       saveUninitialized: false,
       secret: hexo.config.admin.secret
   }));
-  app.use(hexo.config.root + 'admin', auth(new authStrategy(hexo)));
-  app.use(hexo.config.root + 'admin/login', function (req, res) {
+
+  let adminRoot = (hexo.config.admin || {}).root ? hexo.config.admin.root + 'admin' : 'admin';
+
+  app.use(hexo.config.root + adminRoot, auth(new authStrategy(hexo)));
+  app.use(hexo.config.root + adminRoot + '/login', function (req, res) {
       if (req.method === 'POST') {
           req.authenticate(['adminAuth'], function(error, done) {
               if (done) {
-                  res.writeHead(302, { 'Location':  hexo.config.root + "admin/" });
+                  res.writeHead(302, { 'Location':  hexo.config.root + adminRoot });
                   res.end();
               }
           });
@@ -34,7 +37,7 @@ module.exports = function (app, hexo) {
           serveStatic(path.join(__dirname, '../www', 'login'))(req, res);
       }
   });
-  app.use(hexo.config.root + 'admin/', function (req, res, next) {
+  app.use(hexo.config.root + adminRoot, function (req, res, next) {
       req.authenticate(['adminAuth'], next)
   });
 }

@@ -28,8 +28,9 @@ hexo.extend.filter.register('server_middleware', function(app) {
   }
 
   // Main routes
-  app.use(hexo.config.root + 'admin/', serveStatic(path.join(__dirname, 'www')));
-  app.use(hexo.config.root + 'admin/api/', bodyParser.json({limit: '50mb'}));
+  let adminRoot = (hexo.config.admin || {}).root + 'admin';
+  app.use(hexo.config.root + adminRoot, serveStatic(path.join(__dirname, 'www')));
+  app.use(hexo.config.root + adminRoot + '/api/', bodyParser.json({limit: '50mb'}));
 
   // setup the json api endpoints
   api(app, hexo);

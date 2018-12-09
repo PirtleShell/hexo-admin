@@ -115,7 +115,8 @@ module.exports = function (app, hexo) {
   }
 
   var use = function (path, fn) {
-    app.use(hexo.config.root + 'admin/api/' + path, function (req, res) {
+    let adminRoot = (hexo.config.admin || {}).root ? hexo.config.admin.root + 'admin' : 'admin';
+    app.use(hexo.config.root + adminRoot + '/api/' + path, function (req, res) {
       var done = function (val) {
         if (!val) {
           res.statusCode = 204
